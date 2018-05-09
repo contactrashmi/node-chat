@@ -4,6 +4,8 @@ const express = require('express')
 const socketIO = require('socket.io')
 //var io = require('socket.io').listen();
 
+const {generateMessage} = require('./utils/message')
+
 const publicPath = path.join(__dirname, '../public')
 const port = process.env.PORT || 3000
 var app = express()
@@ -16,22 +18,17 @@ io.on('connection', (socket) => {
   console.log('New user connected');
 
    //emits events to single connection
-   /*socket.emit('newMessage', {
-     from: 'server@example.com',
-     createdAt: 123,
-     text: 'New message created by server'
-   })*/
+   socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app.'))
 
 
 
-   socket.on('createMessage', (createMessage) => {
+   socket.on('createMessage', (createMessage, callback) => {
      console.log('Message created by client:', createMessage);
 
      //emits message to every user that is connected
-     io.emit('newMessage', {
-       from: createMessage.from,
-       text: createMessage.text,
-       createdAt: new Date().getTime()
+     io.emit('newMessage', generateMessage(createMessage.from, createMessage.text))
+     callback({
+       text: 'data send'
      })
    })
 
