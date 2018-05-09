@@ -15,24 +15,24 @@ app.use(express.static(publicPath))
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-   /*socket.emit('newEmail', {
-     from: 'ra00119758@gmail.com',
-     createdAt: 123,
-     text: 'Hey!! What is going on.'
-   })*/
-
-   socket.emit('newMessage', {
+   //emits events to single connection
+   /*socket.emit('newMessage', {
      from: 'server@example.com',
      createdAt: 123,
      text: 'New message created by server'
-   })
-
-   /*socket.on('createEmail', (newEmail) => {
-      console.log('New Email', newEmail);
    })*/
+
+
 
    socket.on('createMessage', (createMessage) => {
      console.log('Message created by client:', createMessage);
+
+     //emits message to every user that is connected
+     io.emit('newMessage', {
+       from: createMessage.from,
+       text: createMessage.text,
+       createdAt: new Date().getTime()
+     })
    })
 
   socket.on('disconnect', () => {
